@@ -628,11 +628,9 @@ set -e
 
 Alpine Linux, unlike mainstream/traditional Linux distributions, is based on [BusyBox](https://www.busybox.net/), a very compact (~5MB) Linux distribution. BusyBox (and thus Alpine Linux) uses a different C/C++ stack to most mainstream/traditional Linux distributions - [musl](https://www.musl-libc.org/). There currently is no musl based binary published in the [nodejs official builds](http://nodejs.org/dist/) but they do publish a musl based binary in the [nodejs unofficial builds](https://unofficial-builds.nodejs.org/download/release) which they use in the [node:alpine docker image](https://github.com/nodejs/docker-node/blob/master/13/alpine/Dockerfile). The node:alpine docker image is a potential alternative to nvm for using node on alpine linux.
 
-For more info about unofficial builds visit: https://unofficial-builds.nodejs.org/
-
-Currently the Node project only has unofficial builds for `x64-musl`. Sorry no `ARM-musl`/`x86-musl`,`etc` builds for now.
-
 For now you can override the `nvm_get_arch` function to return `x64-musl` on x64 Alpine Distributions. Currently the Node project only has unofficial builds for `x64-musl`. Sorry no `ARM-musl`/`x86-musl`,`etc` builds for now. The Node project has some desire but no concrete plans (due to the overheads of building, testing and support) to offer Official Alpine-compatible binaries.
+
+For more info about unofficial builds visit: https://unofficial-builds.nodejs.org/
 
 If installing nvm on Alpine Linux *is* still what you want or need to do, you should be able to achieve this by running one of the following from your Alpine Linux shell:
 
