@@ -1640,6 +1640,11 @@ nvm_get_arch() {
     aarch64) NVM_ARCH="arm64" ;;
     *) NVM_ARCH="${HOST_ARCH}" ;;
   esac
+  
+  if (ldd $(which echo) | nvm_grep -q musl); then
+    NVM_ARCH="${NVM_ARCH}-musl"
+  fi
+  
   nvm_echo "${NVM_ARCH}"
 }
 
