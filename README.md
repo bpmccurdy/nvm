@@ -626,22 +626,49 @@ set -e
 
 ## Installing nvm on Alpine Linux
 
-In order to provide the best performance (and other optimisations), nvm will download and install pre-compiled binaries for Node (and npm) when you run `nvm install X`. The Node project compiles, tests and hosts/provides pre-these compiled binaries which are built for mainstream/traditional Linux distributions (such as Debian, Ubuntu, CentOS, RedHat et al).
+Alpine Linux, unlike mainstream/traditional Linux distributions, is based on [BusyBox](https://www.busybox.net/), a very compact (~5MB) Linux distribution. BusyBox (and thus Alpine Linux) uses a different C/C++ stack to most mainstream/traditional Linux distributions - [musl](https://www.musl-libc.org/). There currently is no musl based binary published in the [nodejs official builds](http://nodejs.org/dist/) but they do publish a musl based binary in the [nodejs unofficial builds](https://unofficial-builds.nodejs.org/download/release) which they use in the [node:alpine docker image](https://github.com/nodejs/docker-node/blob/master/13/alpine/Dockerfile). The node:alpine docker image is a potential alternative to nvm for using node on alpine linux.
 
-Alpine Linux, unlike mainstream/traditional Linux distributions, is based on [BusyBox](https://www.busybox.net/), a very compact (~5MB) Linux distribution. BusyBox (and thus Alpine Linux) uses a different C/C++ stack to most mainstream/traditional Linux distributions - [musl](https://www.musl-libc.org/). This makes binary programs built for such mainstream/traditional incompatible with Alpine Linux, thus we cannot simply `nvm install X` on Alpine Linux and expect the downloaded binary to run correctly - you'll likely see "...does not exist" errors if you try that.
+For more info about unofficial builds visit: https://unofficial-builds.nodejs.org/
 
-There is a `-s` flag for `nvm install` which requests nvm download Node source and compile it locally.
+Currently the Node project only has unofficial builds for `x64-musl`. Sorry no `ARM-musl`/`x86-musl`,`etc` builds for now.
 
-If installing nvm on Alpine Linux *is* still what you want or need to do, you should be able to achieve this by running the following from you Alpine Linux shell:
+For now you can override the `nvm_get_arch` function to return `x64-musl` on x64 Alpine Distributions. Currently the Node project only has unofficial builds for `x64-musl`. Sorry no `ARM-musl`/`x86-musl`,`etc` builds for now. The Node project has some desire but no concrete plans (due to the overheads of building, testing and support) to offer Official Alpine-compatible binaries.
+
+If installing nvm on Alpine Linux *is* still what you want or need to do, you should be able to achieve this by running one of the following from your Alpine Linux shell:
+
+### Using Precompiled Binaries on Alpine
+
+Pre-compiled binaries for musl based architectures are unofficially available for most node versions after `node v8.16.0` 
+
+```sh
+cd && touch .profile
+apk add --no-cache libstdc++ coreutils bash
+wget -q0- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
+echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> .profile
+echo "nvm_get_arch() { nvm_echo \"x64-musl\"; }" >> .profile
+source .profile
+```
+
+* `libstdc++` - is the only package that is necessary to run node/npm once it is installed.
+* `bash` - is required to install nvm... BusyBox's `sh` has some issues with `chmod`ing the nvm-exec file, but bash can be removed again after install if you want to slim your image.
+* `coreutils` - is required to for nvm because BusyBox is not 100% POSIX compliant. Mainly `ls` not accepting a `-q` argument
+
+Since there are no io.js builds available for musl you can also disable all io.js versions from showing up in nvm ls-remote by also running:
+```sh
+echo "export NVM_IOJS_ORG_MIRROR=https://example.com" >> .profile
+```
+
+### Building from Source on Alpine
+
+There is a `-s` flag for `nvm install` which requests nvm download Node source and compile it locally. This does not use anything unofficial but it is much slower and more cpu intensive to install and build each version of node.
 
 ```sh
 apk add -U curl bash ca-certificates openssl ncurses coreutils python2 make gcc g++ libgcc linux-headers grep util-linux binutils findutils
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
 ```
 
-The Node project has some desire but no concrete plans (due to the overheads of building, testing and support) to offer Alpine-compatible binaries.
-
-As a potential alternative, @mhart (a Node contributor) has some [Docker images for Alpine Linux with Node and optionally, npm, pre-installed](https://github.com/mhart/alpine-node).
+Similar to the pre-compiled binaries
+* `libstdc++` - is the only package that is necessary to run node/npm once it is installed.
 
 ## Removal
 
