@@ -641,7 +641,7 @@ Pre-compiled binaries for musl based architectures are unofficially available fo
 ```sh
 cd && touch .profile
 apk add --no-cache libstdc++ coreutils bash
-wget -q0- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
 echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> .profile
 source .profile
 ```
