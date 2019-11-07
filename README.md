@@ -640,7 +640,7 @@ Pre-compiled binaries for musl based architectures are unofficially available fo
 
 ```sh
 cd && touch .profile
-apk add --no-cache libstdc++ coreutils bash
+apk add --no-cache libstdc++ coreutils curl bash
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
 echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> .profile
 source .profile
@@ -648,7 +648,7 @@ source .profile
 
 * `libstdc++` - is the only package that is necessary to run node/npm once it is installed.
 * `bash` - is required to install nvm... BusyBox's `sh` has some issues with `chmod`ing the nvm-exec file, but bash can be removed again after install if you want to slim your image.
-* `coreutils` - is required to for nvm because BusyBox is not 100% POSIX compliant. Mainly `ls` not accepting a `-q` argument
+* `coreutils`/`curl` - is required to for nvm because BusyBox is not 100% POSIX compliant. Mainly `ls` not accepting a `-q` argument and `wget` not having the progress bar option.
 
 Since there are no io.js builds available for musl you can also disable all io.js versions from showing up in nvm ls-remote by also running:
 ```sh
